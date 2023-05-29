@@ -49,16 +49,17 @@ const SubmitButton = ({ form }: { form: FormInstance }) => {
 
 const Registration = () => {
   const [form] = Form.useForm();
-  const [fields, setFields] = useState([{}]);
-
   const onFinish = (values: any) => {
     console.log("Success", values);
   };
 
   useEffect(() => {
-    setFields([{ key: 0 }]);
-  }, []);
-
+    form.setFieldsValue({
+      address: [
+        { address1: "", address2: "", city: "", state: "", pincode: "" },
+      ],
+    });
+  });
   return (
     <>
       <h2>Billing Address</h2>
@@ -70,16 +71,10 @@ const Registration = () => {
       >
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item
-              className="formItem textColor"
-              name="name"
-              label="Name"
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
           </Col>
-
           <Col span={8}>
             <Form.Item
               name="age"
@@ -95,7 +90,6 @@ const Registration = () => {
               <Input />
             </Form.Item>
           </Col>
-
           <Col span={8}>
             <Form.Item
               name="email"
@@ -113,7 +107,6 @@ const Registration = () => {
               <Input />
             </Form.Item>
           </Col>
-
           <Col span={8}>
             <Form.Item
               name="phone"
@@ -129,132 +122,107 @@ const Registration = () => {
               <Input addonBefore={prefixSelector} />
             </Form.Item>
           </Col>
-
           <Col span={8}>
             <Form.Item
               name="occupation"
               label="Occupation"
               rules={[{ required: true }]}
             >
-              <Form.Item
-                name="occupation"
-                rules={[{ required: true, message: "Province is required" }]}
-              >
-                <Select placeholder="Select province">
-                  <Select.Option value="Arcitect">Architect</Select.Option>
-                  <Select.Option value="Engineer">Engineer</Select.Option>
-                  <Select.Option value="Doctor">Doctor</Select.Option>
-                </Select>
-              </Form.Item>
+              <Select placeholder="Select province">
+                <Select.Option value="Arcitect">Architect</Select.Option>
+                <Select.Option value="Engineer">Engineer</Select.Option>
+                <Select.Option value="Doctor">Doctor</Select.Option>
+              </Select>
             </Form.Item>
           </Col>
         </Row>
-        {/* Add new Address */}
         <Form.List name="address">
-          {(fields, { add, remove }) => {
-            if (fields.length === 0) {
-              add();
-            }
-            return (
-              <>
-                {fields.map(({ key, name }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="baseline"
-                  >
-                    <Form.Item
-                      label={`# ${key + 1}`}
-                      className="form-address-section"
-                    >
-                      <MinusCircleOutlined
-                        onClick={() => remove(name)}
-                        style={{ float: "right" }}
-                      />
-                      <Row gutter={16}>
-                        <Col span={8}>
-                          <Form.Item
-                            name={[name, "address_1"]}
-                            label="Address 1"
-                            rules={[
-                              { required: true, message: "Address 1 required" },
-                            ]}
-                          >
-                            <Input placeholder="Address 1" />
-                          </Form.Item>
-                        </Col>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map((field, index) => (
+                <div key={field.key}>
+                  <h3>{`# ${index + 1}`}</h3>
+                  {fields.length > 1 && (
+                    <MinusCircleOutlined
+                      onClick={() => remove(field.name)}
+                      style={{ float: "right" }}
+                    />
+                  )}
+                  <Row gutter={16}>
+                    <Col span={8}>
+                      <Form.Item
+                        name={[field.name, "address1"]}
+                        label="Address 1"
+                        rules={[
+                          { required: true, message: "Address 1 required" },
+                        ]}
+                      >
+                        <Input placeholder="Address 1" />
+                      </Form.Item>
+                    </Col>
 
-                        <Col span={8}>
-                          <Form.Item
-                            name={[name, "address_2"]}
-                            label="Address 2"
-                            rules={[
-                              { required: true, message: "Address 2 required" },
-                            ]}
-                          >
-                            <Input placeholder="Address 2" />
-                          </Form.Item>
-                        </Col>
-
-                        <Col span={8}>
-                          <Form.Item
-                            name={[name, "city"]}
-                            label="City"
-                            rules={[
-                              { required: true, message: "City required" },
-                            ]}
-                          >
-                            <Input placeholder="City" />
-                          </Form.Item>
-                        </Col>
-
-                        <Col span={8}>
-                          <Form.Item
-                            name={[name, "state"]}
-                            label="State"
-                            rules={[
-                              { required: true, message: "State required" },
-                            ]}
-                          >
-                            <Input placeholder="State" />
-                          </Form.Item>
-                        </Col>
-
-                        <Col span={8}>
-                          <Form.Item
-                            name={[name, "pincode"]}
-                            label="Pincode"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Pincode",
-                              },
-                              {
-                                pattern: new RegExp("^[0-9]{6,6}$"),
-                                message: "Please enter a valid pincode",
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Pincode" />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Form.Item>
-                  </Space>
-                ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Add New Address
-                  </Button>
-                </Form.Item>
-              </>
-            );
-          }}
+                    <Col span={8}>
+                      <Form.Item
+                        name={[field.name, "address2"]}
+                        label="Address 2"
+                        rules={[
+                          { required: true, message: "Address 2 required" },
+                        ]}
+                      >
+                        <Input placeholder="Address 2" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item
+                        name={[field.name, "city"]}
+                        label="City"
+                        rules={[{ required: true, message: "City required" }]}
+                      >
+                        <Input placeholder="City" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item
+                        name={[field.name, "state"]}
+                        label="State"
+                        rules={[{ required: true, message: "State required" }]}
+                      >
+                        <Input placeholder="State" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item
+                        name={[field.name, "pincode"]}
+                        label="Pincode"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Pincode",
+                          },
+                          {
+                            pattern: new RegExp("^[0-9]{6,6}$"),
+                            message: "Please enter a valid pincode",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="Pincode" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Add New Address
+                </Button>
+              </Form.Item>
+            </>
+          )}
         </Form.List>
         <Form.Item style={{ display: "flex", justifyContent: "center" }}>
           <Form.Item
